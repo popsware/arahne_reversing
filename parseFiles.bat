@@ -1,0 +1,8 @@
+py readFile.py "white-9-1.ep"
+py readFile.py "white-9-0.ep"
+py readFile.py "black-9-1.ep"
+py readFile.py "black-9-0.ep"
+py readFile.py "cobrak-9-1.ep"
+py readFile.py "cobrak-9-0.ep"
+py readFile.py "cobrab-9-1.ep"
+py readFile.py "cobrab-9-0.ep"
