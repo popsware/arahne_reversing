@@ -33,7 +33,10 @@ else:
 
 inputFile = 'files\\'+fileName
 outputFile = 'exported\\'+fileName
-values_per_line = 8
+prefix_values = 66
+# nole9 = 5376/8 = 672
+# 32 extra bits / 8 = 4
+values_per_line = 672 + 4
 vplstring = ""
 if not(values_per_line == 0):
     vplstring = "-vpl"+str(values_per_line)
@@ -87,6 +90,8 @@ print("Total Bytes", total_bytes)
 
 
 # export data to file
+workingonprefix = True
+
 file_outputFile = open(outputFile, "wb")
 file_outputFileDecimal = open(outputFileDecimal, "w")
 file_outputFileBinary = open(outputFileBinary, "w")
@@ -97,14 +102,21 @@ for index, lineArray_decimal in enumerate(array2D_decimal):
     file_outputFile.write(lineArray_Byte)
 
     for index, value_decimal in enumerate(lineArray_decimal):
-        if not (values_per_line == 0) and cuttent_value_index % values_per_line == 0:
-            file_outputFileDecimal.write("\n")
-            file_outputFileBinary.write("\n")
+        if workingonprefix:
+            if prefix_values == 0:
+                file_outputFileDecimal.write("\n")
+                file_outputFileBinary.write("\n")
+                workingonprefix = False
+            prefix_values -= 1
+        else:
+            cuttent_value_index += 1
+            if not (values_per_line == 0) and cuttent_value_index % values_per_line == 0:
+                file_outputFileDecimal.write("\n")
+                file_outputFileBinary.write("\n")
+
         file_outputFileDecimal.write(str(value_decimal)+" ")
         # file_outputFileBinary.write(f"{value_decimal:b}")
         file_outputFileBinary.write(str(get_bin(value_decimal, 8)))
-
-        cuttent_value_index += 1
 
     if values_per_line == 0:
         file_outputFileDecimal.write("\n")

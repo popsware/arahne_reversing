@@ -19,11 +19,12 @@ Arahne Weave is a Sweden software that allow designers to convert thier weave de
 This project is not meant as a way to overcome the software license or so. I highly encourage users to buy the license. However, i am trying to build a way to automate processes to make this process much faster.
 
 
-### What knowledge i have ###
+### What knowledge i have on reverse engineering ###
 
 * machine files are binary files
 * i am trying to understand the files through exporting many files and testing them
 * i am using this project to manupilate the files and try to display thier info in a slightly more friendly way
+* the whole process depends on exporting multiple files and comparing them in order to find a pattern
 
 
 ### Message to the reader ###
