@@ -4,6 +4,7 @@ import math
 import struct
 from pathlib import Path
 import sys
+from configparser import ConfigParser
 
 
 def get_bin(x, n=0):
@@ -24,24 +25,35 @@ def get_bin(x, n=0):
     return format(x, 'b').zfill(n)
 
 
-# Streaming Channel & Detection Frame Selection
-if len(sys.argv) > 1:
-    fileName = sys.argv[1]
+if len(sys.argv) > 2:
+    fileName = sys.argv[2]
+    machine = sys.argv[1]
 else:
-    fileName = 'cobrab-9-1.ep'
+    fileName = 'cobrab-1-1.3072'
+    machine = 'nole1'
+    print("No ARGS, proceeding with default values")
+
+print("running script on "+fileName+" for machine "+machine)
+
+config_machine = ConfigParser()
+config_machine.read('config_machine.ini')
+
+# bytes written before starting writing the design
+# Nole 9 ex: 66
+prefix_values = config_machine.getint(machine, 'prefix_values')
+# Nole 9 EX:
+# Line = 5376 bits + 32 extra bits
+# Line = 672 Bytes + 4 Bytes
+values_per_line = config_machine.getint(machine, 'values_per_line')
 
 
 inputFile = 'files\\'+fileName
 outputFile = 'exported\\'+fileName
-prefix_values = 66
-# nole9 = 5376/8 = 672
-# 32 extra bits / 8 = 4
-values_per_line = 672 + 4
 vplstring = ""
 if not(values_per_line == 0):
     vplstring = "-vpl"+str(values_per_line)
-outputFileDecimal = 'exported_decimal\\'+fileName+vplstring
-outputFileBinary = 'exported_binary\\'+fileName+vplstring
+outputFileDecimal = 'exported_decimal\\'+fileName
+outputFileBinary = 'exported_binary\\'+fileName
 
 
 # data = Path(fileName).read_bytes()
@@ -68,8 +80,7 @@ with open(inputFile, "rb") as file:
     rowIndex = 0
     for rowIndex, line in enumerate(lines):
         if(rowIndex < 0):
-            firstbyteofline = line[0]
-            # print(f'line {rowIndex}: {firstbyteofline}')
+            # print(f'line {rowIndex}: {line[0]}')
             print(f'line {rowIndex}: {line}')
         linearray_decimal = []
         for byteIndex, bytevalue in enumerate(line):
@@ -83,10 +94,10 @@ with open(inputFile, "rb") as file:
 total_bytes = 0
 for index, lineArray_decimal in enumerate(array2D_decimal):
     total_bytes += len(linearray_decimal)
-    if (index > -1):
+    if(index < 10):
         print(index, len(lineArray_decimal))
         # print(lineArray_decimal)
-print("Total Bytes", total_bytes)
+print("Total Bytes", total_bytes, len(array2D_decimal))
 
 
 # export data to file
@@ -97,10 +108,11 @@ file_outputFileDecimal = open(outputFileDecimal, "w")
 file_outputFileBinary = open(outputFileBinary, "w")
 cuttent_value_index = 0
 for index, lineArray_decimal in enumerate(array2D_decimal):
-
+    # writing exact file (Bytes)
     lineArray_Byte = bytes(lineArray_decimal)
     file_outputFile.write(lineArray_Byte)
 
+    # writing different formats (Decimal, Binary)
     for index, value_decimal in enumerate(lineArray_decimal):
         if workingonprefix:
             if prefix_values == 0:
@@ -114,9 +126,9 @@ for index, lineArray_decimal in enumerate(array2D_decimal):
                 file_outputFileDecimal.write("\n")
                 file_outputFileBinary.write("\n")
 
-        file_outputFileDecimal.write(str(value_decimal)+" ")
-        # file_outputFileBinary.write(f"{value_decimal:b}")
-        file_outputFileBinary.write(str(get_bin(value_decimal, 8)))
+        file_outputFileDecimal.write(f"{value_decimal:03}"+" ")
+        # file_outputFileBinary.write(f"{value_decimal:b}") # decimal may be represented in less than 8 binary digits
+        file_outputFileBinary.write(str(get_bin(value_decimal, 8)) + " ")
 
     if values_per_line == 0:
         file_outputFileDecimal.write("\n")
@@ -126,28 +138,6 @@ file_outputFile.flush()
 file_outputFileDecimal.flush()
 
 
-"""
-# prepare data for plotting
-#lastline = array2D_decimal.pop()
-#line_0 = array2D_decimal.pop(0)
-#line_1 = array2D_decimal.pop(0)
-#line_2 = array2D_decimal.pop(0)
-mat = np.array(array2D_decimal)
-
-# start plotting
-plot1 = plt.figure(1)
-plt.imshow(mat)
-plt.title("Disk")
-
-"""
-
-
-"""
-plot1 = plt.figure(2)
-plt.plot(line_0)
-plt.title("Line_0")
-"""
-
-"""
-plt.show()
-"""
+print("exported "+outputFile)
+print("exported "+outputFileDecimal)
+print("exported "+outputFileBinary)
