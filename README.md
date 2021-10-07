@@ -18,6 +18,9 @@ Arahne Weave is a Sweden software that allow designers to convert thier weave de
 
 This project is not meant as a way to overcome the software license or so. I highly encourage users to buy the license. However, i am trying to build a way to automate processes to make this process much faster.
 
+The Software is configured for 10 types of machines named from nole1,nole2,...nole11. some machines are
+simillar, while others are totally different. But all of them operate using the same main manufacturer "Bonus".
+
 
 ### What knowledge i have on reverse engineering ###
 
@@ -29,7 +32,7 @@ This project is not meant as a way to overcome the software license or so. I hig
 ### Trickiest challenges that hazed me ###
 
 * the files had a number of prefix of bytes in the begining of the file that had to be eliminated from the pattern search
-* the length of the pattern line was hte greatest issue. whether there is actually a constant size per line
+* the length of the pattern line was the greatest issue. whether there is actually a constant size per line
 
 
 ### Message to the reader ###
